@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Revision: 3827 $ -->
+<!-- $Revision: 4868 $ -->
  <sect1 id="language.function.ldelim">
   <title>{ldelim},{rdelim}</title>
   <para>
@@ -9,7 +9,7 @@
    <emphasis role="bold">{</emphasis> and <emphasis role="bold">}</emphasis>.
    You can also use <link linkend="language.function.literal"><varname>{literal}{/literal}</varname></link>
    to escape blocks of text eg Javascript or CSS.
-    See also the complimentary <link
+    See also the complementary <link
     linkend="language.variables.smarty.ldelim"><parameter>{$smarty.ldelim}</parameter></link>.
   </para>
   <example>
