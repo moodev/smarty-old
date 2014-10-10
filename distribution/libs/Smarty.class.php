@@ -2,7 +2,7 @@
 /**
  * Project:     Smarty: the PHP compiling template engine
  * File:        Smarty.class.php
- * SVN:         $Id: Smarty.class.php 4848 2014-06-08 18:12:09Z Uwe.Tews@googlemail.com $
+ * SVN:         $Id: Smarty.class.php 4889 2014-10-10 17:12:39Z Uwe.Tews@googlemail.com $
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -110,7 +110,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * smarty version
      */
-    const SMARTY_VERSION = 'Smarty-3.1.20';
+    const SMARTY_VERSION = 'Smarty-3.1.21-dev';
 
     /**
      * define variable scopes
