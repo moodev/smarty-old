@@ -25,6 +25,27 @@
         "forum": "http://www.smarty.net/forums/",
         "source": "http://code.google.com/p/smarty-php/source/browse/"
     },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "smarty/smarty",
+                "version": "3.1.20",
+                "dist": {
+                    "url": "https://github.com/smarty-php/smarty/distribution",
+                    "type": "vcs"
+                },
+                "autoload": {
+                    "classmap": [
+                        "libs/Smarty.class.php",
+                        "libs/SmartyBC.class.php",
+                        "libs/sysplugins/smarty_security.php"
+                    ]
+                }
+            }
+        }
+    ]
+
     "require": {
         "php": ">=5.2"
     },
