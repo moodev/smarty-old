@@ -28,7 +28,7 @@
     " repositories ": [
         {
             " type ": " vcs ",
-            " url ": " https :// github . com / smarty-php / smarty / distribution "
+            " url ": " https :// github . com / uwetews / smarty / distribution "
         }
     ],
     "require": {
