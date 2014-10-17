@@ -1,6 +1,6 @@
 {
-    "name": "smarty/smarty",
-    "type": "metapackage",
+    "name": "smarty/distribution",
+    "type": "library",
     "description": "Smarty - the compiling PHP template engine",
     "keywords": ["templating"],
     "homepage": "http://www.smarty.net",
@@ -25,14 +25,14 @@
         "forum": "http://www.smarty.net/forums/",
         "source": "http://code.google.com/p/smarty-php/source/browse/"
     },
-    " repositories ": [
-        {
-            " type ": " vcs ",
-            " url ": " https :// github . com / smarty-php / smarty / distribution "
-        }
-    ],
     "require": {
-        "php": ">=5.2",
-        "smarty/distribution": "~3.1.19"
+        "php": ">=5.2"
+    },
+    "autoload": {
+        "classmap": [
+            "libs/Smarty.class.php", 
+            "libs/SmartyBC.class.php",
+            "libs/sysplugins/smarty_security.php"
+        ]
     }
 }
