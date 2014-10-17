@@ -33,7 +33,7 @@
     ],
     "require": {
         "php": ">=5.2",
-        "smarty/distribution": "~3.1"
+        "smarty/distribution": "3.1.21"
     },
     "extra": {
         "branch-alias": {
