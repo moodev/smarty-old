@@ -37,7 +37,7 @@
                 },
                 "source": {
                     "url": "http://smarty-php.googlecode.com/svn/",
-                    "type": "svn",
+                    "type": "svn"
                 },
                 "autoload": {
                     "classmap": ["libs/"]
