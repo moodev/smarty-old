@@ -33,7 +33,7 @@
                 "version": "3.1.20",
                 "dist": {
                     "url": "https://github.com/smarty-php/smarty/distribution",
-                    "type": "vcs"
+                    "type": "composer"
                 },
                 "autoload": {
                     "classmap": [
