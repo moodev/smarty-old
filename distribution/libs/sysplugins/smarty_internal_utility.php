@@ -796,6 +796,7 @@ class Smarty_Internal_Utility
                 "shared.mb_unicode.php"                 => true,
                 "shared.mb_wordwrap.php"                => true,
                 "variablefilter.htmlspecialchars.php"   => true,
+                "variablefilter.taintwarning.php"       => true,
             );
             $iterator = new DirectoryIterator($source);
             foreach ($iterator as $file) {

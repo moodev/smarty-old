@@ -78,7 +78,7 @@ class Smarty_Internal_Compile_Private_Print_Expression extends Smarty_Internal_C
                 }
                 // autoescape html
                 if ($compiler->template->smarty->escape_html) {
-                    $output = "htmlspecialchars({$output}, ENT_QUOTES, '" . addslashes(Smarty::$_CHARSET) . "')";
+                    $output = "new Smarty_StringValue(htmlspecialchars({$output}, ENT_QUOTES, '" . addslashes(Smarty::$_CHARSET) . "'), false)";
                 }
                 // loop over registered filters
                 if (!empty($compiler->template->smarty->registered_filters[Smarty::FILTER_VARIABLE])) {

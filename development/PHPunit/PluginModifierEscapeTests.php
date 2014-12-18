@@ -11,10 +11,21 @@
 */
 class PluginModifierEscapeTests extends PHPUnit_Framework_TestCase
 {
+
+    /**
+     * @var Smarty
+     */
+    public $smarty;
+
     public function setUp()
     {
         $this->smarty = SmartyTests::$smarty;
         SmartyTests::init();
+    }
+
+    public function tearDown()
+    {
+        $this->smarty->unloadFilter(Smarty::FILTER_VARIABLE, "taintwarning");
     }
 
     static function isRunnable()
@@ -208,6 +219,131 @@ class PluginModifierEscapeTests extends PHPUnit_Framework_TestCase
         $tpl = $this->smarty->createTemplate('eval:{"' . utf8_decode('sma\'rty@»example«.com') . '"|escape:"nonstd"}');
         $this->assertEquals("sma'rty@&#187;example&#171;.com", $this->smarty->fetch($tpl));
         Smarty::$_MBSTRING = true;
+    }
+
+    public function testUntaintsStuff()
+    {
+        $escaped = smarty_modifier_escape("foobar&baz", "html");
+        $this->assertTrue($escaped instanceof Smarty_StringValue);
+        $this->assertEquals("foobar&amp;baz", $escaped->value);
+        $this->assertFalse($escaped->tainted);
+    }
+
+    public function testTypoTaintsStuff()
+    {
+        $escaped = smarty_modifier_escape("foobar&baz", "iamnotvalidescaping");
+        $this->assertTrue($escaped instanceof Smarty_StringValue);
+        $this->assertEquals("foobar&baz", $escaped->value);
+        $this->assertTrue($escaped->tainted);
+    }
+
+    public function testTypoTaintsUntainted()
+    {
+        $escaped = smarty_modifier_escape(new Smarty_StringValue("foobar&baz", false), "iamnotvalidescaping");
+        $this->assertTrue($escaped instanceof Smarty_StringValue);
+        $this->assertEquals("foobar&baz", $escaped->value);
+        $this->assertTrue($escaped->tainted);
+    }
+
+    public function testUntaintsTainted()
+    {
+        $escaped = smarty_modifier_escape(new Smarty_StringValue("foobar&baz", true), "html");
+        $this->assertTrue($escaped instanceof Smarty_StringValue);
+        $this->assertEquals("foobar&amp;baz", $escaped->value);
+        $this->assertFalse($escaped->tainted);
+    }
+
+    public function testCompilerUntaintsStuff()
+    {
+        $compiler = new Smarty_Internal_SmartyTemplateCompiler("", "", $this->smarty);
+        $compiler->template = new Smarty_Internal_Template(null, $this->smarty);
+        $code = smarty_modifiercompiler_escape(array("'foobar&baz'", "'html'"), $compiler);
+        $escaped = eval('return ' . $code . ';');
+        $this->assertTrue($escaped instanceof Smarty_StringValue);
+        $this->assertEquals("foobar&amp;baz", $escaped->value);
+        $this->assertFalse($escaped->tainted);
+    }
+
+    public function testCompilerTypoTaintsStuff()
+    {
+        $compiler = new Smarty_Internal_SmartyTemplateCompiler("", "", $this->smarty);
+        $compiler->template = new Smarty_Internal_Template(null, $this->smarty);
+        $code = smarty_modifiercompiler_escape(array("'foobar&baz'", "'iamnotvalidescaping'"), $compiler);
+        $escaped = eval('return ' . $code . ';');
+        $this->assertTrue($escaped instanceof Smarty_StringValue);
+        $this->assertEquals("foobar&baz", $escaped->value);
+        $this->assertTrue($escaped->tainted);
+    }
+
+    public function testCompilerTypoTaintsUntainted()
+    {
+        $compiler = new Smarty_Internal_SmartyTemplateCompiler("", "", $this->smarty);
+        $compiler->template = new Smarty_Internal_Template(null, $this->smarty);
+        $code = smarty_modifiercompiler_escape(array("new Smarty_StringValue('foobar&baz', false)", "'iamnotvalidescaping'"), $compiler);
+        $escaped = eval('return ' . $code . ';');
+        $this->assertTrue($escaped instanceof Smarty_StringValue);
+        $this->assertEquals("foobar&baz", $escaped->value);
+        $this->assertTrue($escaped->tainted);
+    }
+
+    public function testCompilerUntaintsTainted()
+    {
+        $compiler = new Smarty_Internal_SmartyTemplateCompiler("", "", $this->smarty);
+        $compiler->template = new Smarty_Internal_Template(null, $this->smarty);
+        $code = smarty_modifiercompiler_escape(array("new Smarty_StringValue('foobar&baz', false)", "'html'"), $compiler);
+        $code = smarty_modifiercompiler_escape(array("'foobar&baz'", "'html'"), SmartyTests::$smarty);
+        $escaped = eval('return ' . $code . ';');
+        $this->assertTrue($escaped instanceof Smarty_StringValue);
+        $this->assertEquals("foobar&amp;baz", $escaped->value);
+        $this->assertFalse($escaped->tainted);
+    }
+
+    /**
+     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedExceptionMessage taintwarning: Outputting tainted value
+     */
+    public function testTaintWarning()
+    {
+        $this->smarty->loadFilter(Smarty::FILTER_VARIABLE, "taintwarning");
+        $tpl = $this->smarty->createTemplate('eval:{"I\'m some <html> to ä be \"escaped\" or &copy;"}');
+        $this->smarty->fetch($tpl);
+    }
+
+    public function testUntaintNoWarning()
+    {
+        $this->smarty->loadFilter(Smarty::FILTER_VARIABLE, "taintwarning");
+        $tpl = $this->smarty->createTemplate('eval:{"I\'m some <html> to ä be \"escaped\" or &copy;"|escape:"html"}');
+        $this->assertEquals("I&#039;m some &lt;html&gt; to ä be &quot;escaped&quot; or &amp;copy;", $this->smarty->fetch($tpl));
+    }
+
+    /**
+     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedExceptionMessage taintwarning: Outputting tainted value
+     */
+    public function testRetaintWarning()
+    {
+        $this->smarty->loadFilter(Smarty::FILTER_VARIABLE, "taintwarning");
+        $tpl = $this->smarty->createTemplate('eval:{"I\'m some <html> to ä be \"escaped\" or &copy;"|escape:"html"|wordwrap}');
+        $this->assertEquals("I&#039;m some &lt;html&gt; to ä be &quot;escaped&quot; or &amp;copy;", $this->smarty->fetch($tpl));
+    }
+
+    /**
+     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedExceptionMessage taintwarning: Outputting tainted value
+     */
+    public function testTaintedAssign()
+    {
+        $this->smarty->loadFilter(Smarty::FILTER_VARIABLE, "taintwarning");
+        $this->smarty->assign("testcontent", "HELLO WORLD!");
+        $this->smarty->fetch('eval:{$testcontent}');
+    }
+
+    public function testUnTaintedAssign()
+    {
+        $this->smarty->loadFilter(Smarty::FILTER_VARIABLE, "taintwarning");
+        $this->smarty->assign("testcontent", new Smarty_StringValue("HELLO WORLD!", false));
+        $result = $this->smarty->fetch('eval:{$testcontent}');
+        $this->assertEquals("HELLO WORLD!", $result);
     }
 
 }
