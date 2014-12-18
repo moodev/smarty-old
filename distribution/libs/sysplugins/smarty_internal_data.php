@@ -490,20 +490,29 @@ class Smarty_StringValue
 {
 
     public $value;
+    public $escaped = null;
 
-    public $tainted = true;
-
-    public function __construct($value, $tainted = true) {
-        $this->tainted = $tainted === null || $tainted;
+    public function __construct($value, $escaped = null) {
         if ($value instanceof Smarty_Variable) {
             $value = $value->value;
         }
         if ($value instanceof Smarty_StringValue) {
             $this->value = $value->value;
-            $this->tainted = $tainted || ($tainted === null && $value->tainted);
+            $escaped = $escaped ? : $value->escaped;
         } else {
             $this->value = "".$value;
         }
+        $this->escaped = $escaped;
+    }
+
+    public function taint()
+    {
+        $this->escaped = null;
+    }
+
+    public function tainted($context = null)
+    {
+        return $context == null ? $this->escaped == null : $this->escaped != $context;
     }
 
     public function __toString()

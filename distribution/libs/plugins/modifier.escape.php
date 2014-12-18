@@ -25,16 +25,16 @@
 function smarty_modifier_escape($string, $esc_type = 'html', $char_set = null, $double_encode = true)
 {
     if ($string === null) {
-        return $string;
+        $string = "";
     }
     $escaped =_smarty_modifier_escape_string($string, $esc_type, $char_set, $double_encode);
     if ($escaped === null) {
         // Not escapeable, taint it.
         // This preserves compatibility with old implementation which defaults to no escaping when it doesn't
         // recognise the escaping mechanism (srsly, wtf?)
-        return new Smarty_StringValue($string, true);
+        return new Smarty_StringValue($string, null);
     }
-    return new Smarty_StringValue($escaped, false);
+    return new Smarty_StringValue($escaped, $esc_type);
 }
 
 function _smarty_modifier_escape_string($string, $esc_type, $char_set, $double_encode)

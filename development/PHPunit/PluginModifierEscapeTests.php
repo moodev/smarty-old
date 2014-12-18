@@ -226,7 +226,7 @@ class PluginModifierEscapeTests extends PHPUnit_Framework_TestCase
         $escaped = smarty_modifier_escape("foobar&baz", "html");
         $this->assertTrue($escaped instanceof Smarty_StringValue);
         $this->assertEquals("foobar&amp;baz", $escaped->value);
-        $this->assertFalse($escaped->tainted);
+        $this->assertFalse($escaped->tainted("html"));
     }
 
     public function testTypoTaintsStuff()
@@ -234,23 +234,23 @@ class PluginModifierEscapeTests extends PHPUnit_Framework_TestCase
         $escaped = smarty_modifier_escape("foobar&baz", "iamnotvalidescaping");
         $this->assertTrue($escaped instanceof Smarty_StringValue);
         $this->assertEquals("foobar&baz", $escaped->value);
-        $this->assertTrue($escaped->tainted);
+        $this->assertTrue($escaped->tainted());
     }
 
     public function testTypoTaintsUntainted()
     {
-        $escaped = smarty_modifier_escape(new Smarty_StringValue("foobar&baz", false), "iamnotvalidescaping");
+        $escaped = smarty_modifier_escape(new Smarty_StringValue("foobar&baz", "html"), "iamnotvalidescaping");
         $this->assertTrue($escaped instanceof Smarty_StringValue);
         $this->assertEquals("foobar&baz", $escaped->value);
-        $this->assertTrue($escaped->tainted);
+        $this->assertTrue($escaped->tainted());
     }
 
     public function testUntaintsTainted()
     {
-        $escaped = smarty_modifier_escape(new Smarty_StringValue("foobar&baz", true), "html");
+        $escaped = smarty_modifier_escape(new Smarty_StringValue("foobar&baz", null), "html");
         $this->assertTrue($escaped instanceof Smarty_StringValue);
         $this->assertEquals("foobar&amp;baz", $escaped->value);
-        $this->assertFalse($escaped->tainted);
+        $this->assertFalse($escaped->tainted("html"));
     }
 
     public function testCompilerUntaintsStuff()
@@ -261,7 +261,7 @@ class PluginModifierEscapeTests extends PHPUnit_Framework_TestCase
         $escaped = eval('return ' . $code . ';');
         $this->assertTrue($escaped instanceof Smarty_StringValue);
         $this->assertEquals("foobar&amp;baz", $escaped->value);
-        $this->assertFalse($escaped->tainted);
+        $this->assertFalse($escaped->tainted("html"));
     }
 
     public function testCompilerTypoTaintsStuff()
@@ -272,7 +272,7 @@ class PluginModifierEscapeTests extends PHPUnit_Framework_TestCase
         $escaped = eval('return ' . $code . ';');
         $this->assertTrue($escaped instanceof Smarty_StringValue);
         $this->assertEquals("foobar&baz", $escaped->value);
-        $this->assertTrue($escaped->tainted);
+        $this->assertTrue($escaped->tainted());
     }
 
     public function testCompilerTypoTaintsUntainted()
@@ -283,7 +283,7 @@ class PluginModifierEscapeTests extends PHPUnit_Framework_TestCase
         $escaped = eval('return ' . $code . ';');
         $this->assertTrue($escaped instanceof Smarty_StringValue);
         $this->assertEquals("foobar&baz", $escaped->value);
-        $this->assertTrue($escaped->tainted);
+        $this->assertTrue($escaped->tainted());
     }
 
     public function testCompilerUntaintsTainted()
@@ -295,7 +295,7 @@ class PluginModifierEscapeTests extends PHPUnit_Framework_TestCase
         $escaped = eval('return ' . $code . ';');
         $this->assertTrue($escaped instanceof Smarty_StringValue);
         $this->assertEquals("foobar&amp;baz", $escaped->value);
-        $this->assertFalse($escaped->tainted);
+        $this->assertFalse($escaped->tainted("html"));
     }
 
     /**
